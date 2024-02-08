@@ -1,7 +1,8 @@
 import 'package:github_reps/Models/repoOwner.dart';
 
 class GithubRepoItem {
-  String? _name, _url, _description;
+  String? _name, _url, _description,_created_at;
+
   RepOwner? _repOwner;
 
 
@@ -34,4 +35,12 @@ class GithubRepoItem {
   set repOwner(RepOwner value) {
     _repOwner = value;
   }
+
+  String get created_at => _created_at!;
+
+  set created_at(String value) {
+    _created_at = value;
+  }
+
+
 }

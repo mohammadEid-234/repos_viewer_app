@@ -10,9 +10,10 @@ void main() {
 
 class _RootWidget extends StatelessWidget {
   //the root screen for the app
+
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
       color: Colors.white,
       home: HomePage(),
       debugShowCheckedModeBanner: false, //hide debug banner

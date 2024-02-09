@@ -1,16 +1,6 @@
-# github_reps
+Welcom to repos_viewer_app , This is a cross-platform flutter app that fetches repositories from github REST API using many endpoints such as search,user,..etc , the app consits of two main features : View,Search .
 
-Github API
+View: When the app launches , it fetches the latest repositores from the api , and displays the following information : name , url , owner's name , owner's avatar , In addition to details button that opens new page that contains more detailed info about the repository such as branches,creation date.
 
-## Getting Started
+Search: The app contains top search bar that fetches search query from the user , and has a filter button that determines the search category.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

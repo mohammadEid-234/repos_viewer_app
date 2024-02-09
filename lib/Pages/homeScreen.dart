@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:github_reps/Constants/filterTypes.dart';
+import 'package:github_reps/Pages/RepoDetails.dart';
 import 'package:github_reps/Provider/searchController.dart';
 import 'package:github_reps/Utils/searchTimer.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +56,8 @@ class _HomePageState extends State<HomePage> {
 
     //http GET Request to fetch repositories from Github api
     HttpManager.getRequest(url).then((response) {
+      _pageLoading = false; //stop loading after response
+
       // check whether status is OK or something is wrong
       if (response != null && response.statusCode == 200) {
         String responseBody = response.body;
@@ -85,7 +88,6 @@ class _HomePageState extends State<HomePage> {
         _somethingWrong = true;
       }
       setState(() {
-        _pageLoading = false;
       });
     });
   }
@@ -182,6 +184,7 @@ class _HomePageState extends State<HomePage> {
                 );
               }
               return Container(
+
                   margin: EdgeInsets.all(5),
                   child: TextButton(
                       //disable press when fetching more
@@ -232,7 +235,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
                           width: screenWidth * 0.1,
@@ -253,14 +256,20 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Text(
+                        Flexible( //prevent text overflow
+                          fit: FlexFit.loose,
+                          child: Text(
                           repos[index].repOwner.username,
                           textAlign: TextAlign.center,
+                          textScaler: textScaler,
                           style: TextStyle(
                               overflow: TextOverflow.ellipsis,
                               fontWeight: FontWeight.bold,
                               fontSize: 18),
-                        ),
+                        ),),
+
+                        const Spacer(),
+
                       ],
                     ),
                     Container(
@@ -290,12 +299,17 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    if (repos[index].description.isNotEmpty) ...[
+                    if (repos[index].description.isNotEmpty)
                       Text(
                         repos[index].description,
                         style: const TextStyle(fontSize: 15),
-                      )
-                    ]
+                      ),
+
+                    Center(child: TextButton.icon(icon: Icon(Icons.remove_red_eye_outlined,),onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context){
+                        return RepoDetails(githubRepoItem: repos[index]);
+                      }));
+                    }, label: Text("Details")),)
                   ],
                 ));
           });
@@ -443,7 +457,7 @@ class _HomePageState extends State<HomePage> {
       //refresh button
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          pageIndex = 1;
+          pageIndex = 1; //reset list
           repos.clear();
           _searchTxt!.clear();
           String url =
@@ -457,7 +471,7 @@ class _HomePageState extends State<HomePage> {
       body: NestedScrollView(
           controller: _scrollController,
           clipBehavior: Clip.none,
-          headerSliverBuilder: (context, bool) {
+          headerSliverBuilder: (context, b) {
             return <Widget>[
               pageHeader(),
             ];

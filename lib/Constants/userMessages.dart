@@ -1,11 +1,10 @@
-import 'dart:ui';
 
 enum Message {
   //messages that will be displayed to user
   error,
   loading,
   noData,
-  noMatch
+  noBranches
 }
 
 class UserMessages {
@@ -14,7 +13,7 @@ class UserMessages {
     Message.error: "Something Wrong",
     Message.loading : "Loading",
     Message.noData :"No data",
-    Message.noMatch :"No Results match your search"
+    Message.noBranches :"No Branches Available"
   };
 
   static String getMsg(Message message) => msgs[message] ?? "";

@@ -30,13 +30,13 @@ class GithubRepoItem {
     _description = value;
   }
 
-  RepOwner get repOwner => _repOwner!;
+  RepOwner get repOwner => _repOwner??RepOwner(username: "", avatarUrl: "");
 
   set repOwner(RepOwner value) {
     _repOwner = value;
   }
 
-  String get created_at => _created_at!;
+  String get created_at => _created_at??"";
 
   set created_at(String value) {
     _created_at = value;

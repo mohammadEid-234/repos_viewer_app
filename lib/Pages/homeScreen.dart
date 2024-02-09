@@ -43,7 +43,6 @@ class _HomePageState extends State<HomePage> {
   //repos that will be displayed on the screen
   List<GithubRepoItem> repos = List.empty(growable: true);
 
-  TextScaler textScaler = TextScaler.noScaling; //prevent text scaling
   FilterController? _filterController;
 
   //async function to fetch latest repositories using github rest api
@@ -201,7 +200,6 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Text(
                             "View More",
-                            textScaler: textScaler,
                             style: TextStyle(
                               fontSize: 15,
                             ),
@@ -261,7 +259,6 @@ class _HomePageState extends State<HomePage> {
                           child: Text(
                           repos[index].repOwner.username,
                           textAlign: TextAlign.center,
-                          textScaler: textScaler,
                           style: TextStyle(
                               overflow: TextOverflow.ellipsis,
                               fontWeight: FontWeight.bold,
@@ -290,7 +287,6 @@ class _HomePageState extends State<HomePage> {
                             flex: 1,
                             child: Text(
                               repos[index].name,
-                              textScaler: textScaler,
                               style: const TextStyle(
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 15),

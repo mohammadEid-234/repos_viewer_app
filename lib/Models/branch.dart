@@ -14,7 +14,7 @@ class Branch{
     _name = value;
   }
 
-  bool get protected => _protected!;
+  bool get protected => _protected??false;
 
   set protected(bool value) {
     _protected = value;

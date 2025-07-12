@@ -4,11 +4,12 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:github_reps/Constants/userMessages.dart';
-import 'package:github_reps/Models/githubRep.dart';
-import 'package:github_reps/Utils/httpManager.dart';
+import 'package:github_reps/core/constants/user_messages.dart';
+import 'package:github_reps/core/utils/logger.dart';
+import 'package:github_reps/features/home/model/github_repo.dart';
+import 'package:github_reps/core/utils/http_manager.dart';
 
-import '../Models/branch.dart';
+import '../model/branch.dart';
 
 class RepoDetails extends StatefulWidget {
   GithubRepoItem? githubRepoItem;
@@ -38,15 +39,13 @@ class _RepoDetails extends State<RepoDetails> {
         try {
           List<dynamic> jsonList = jsonDecode(response.body);
           for (var item in jsonList) {
-            print("branch : $item");
-            Branch branch = Branch(
-                name: item['name'] ?? "",
-                protected: item['protected'] ?? false);
+            Logger.log("branch : $item");
+            Branch branch = Branch.fromJson(item);
             branches.add(branch);
 
           }
         } catch (exception) {
-          print("branches response exception: $exception");
+          Logger.log("branches response exception: $exception");
           _somethingWrong = true;
         }
       } else {
@@ -99,7 +98,7 @@ class _RepoDetails extends State<RepoDetails> {
           const SizedBox(height: 5,),
           ListTile(
             leading: Icon(Icons.calendar_month,size: screenWidth*0.05,),
-            title: Text(widget.githubRepoItem!.created_at.split("T")[0]),
+            title: Text(widget.githubRepoItem!.createdAt.split("T")[0]),
           ),
           const SizedBox(height: 5,),
 
@@ -154,9 +153,9 @@ class _RepoDetails extends State<RepoDetails> {
                 ),
                 title: Text(branches[index].name),
                 subtitle: Text(
-                  branches[index].protected ? "Protected" : "Not Protected",
+                  branches[index].isProtected ? "Protected" : "Not Protected",
                   style: TextStyle(
-                      color: branches[index].protected
+                      color: branches[index].isProtected
                           ? Colors.green
                           : Colors.red),
                 ),
@@ -194,7 +193,7 @@ class _RepoDetails extends State<RepoDetails> {
     screenWidth = currentView.physicalSize.width / currentView.devicePixelRatio;
     return Scaffold(
         appBar: AppBar(
-          title: Text("Details"),
+          title: const Text("Details"),
         ),
         body: pageBody());
   }

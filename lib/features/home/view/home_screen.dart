@@ -2,15 +2,16 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:github_reps/Constants/filterTypes.dart';
-import 'package:github_reps/Pages/RepoDetails.dart';
-import 'package:github_reps/Provider/searchController.dart';
-import 'package:github_reps/Utils/searchTimer.dart';
+import 'package:github_reps/core/constants/filter_types.dart';
+import 'package:github_reps/features/home/view/repo_details.dart';
+import 'package:github_reps/features/home/view_model/search_controller.dart';
+import 'package:github_reps/core/utils/logger.dart';
+import 'package:github_reps/core/utils/search_timer.dart';
 import 'package:provider/provider.dart';
-import '../Constants/userMessages.dart';
-import '../Models/githubRep.dart';
-import '../Models/repoOwner.dart';
-import '../Utils/httpManager.dart';
+import '../../../core/constants/user_messages.dart';
+import '../model/github_repo.dart';
+import '../model/repo_owner.dart';
+import '../../../core/utils/http_manager.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -64,23 +65,12 @@ class _HomePageState extends State<HomePage> {
           //get repo list from json response
           List<dynamic> itemsJson = jsonDecode(responseBody)['items'];
           for (var jsonItem in itemsJson) {
-            var ownerItem = jsonItem['owner'];
-            GithubRepoItem githubRepoItem = GithubRepoItem(
-                name: jsonItem['name'] ?? "",
-                //check if item is null before passing it to the constructor
-                url: jsonItem['html_url'] ?? "",
-                description: jsonItem['description'] ?? "");
 
-            githubRepoItem.created_at = jsonItem['created_at'] ?? "";
-            githubRepoItem.repOwner = RepOwner(
-                username: ownerItem['login'] ?? "",
-                avatarUrl: ownerItem['avatar_url'] ?? "");
-
-            repos.add(githubRepoItem);
+            repos.add(GithubRepoItem.fromJson(jsonItem));
           }
           _somethingWrong = false;
         } catch (exception) {
-          print("response exception : ${exception}");
+          Logger.log("response exception : $exception");
           _somethingWrong = true;
         }
       } else {
@@ -102,22 +92,13 @@ class _HomePageState extends State<HomePage> {
           //get repo list from json response
           List<dynamic> itemsJson = jsonDecode(responseBody)['items'];
           for (var jsonItem in itemsJson) {
-            var ownerItem = jsonItem['owner'];
-            GithubRepoItem githubRepoItem = GithubRepoItem(
-                name: jsonItem['name'] ?? "",
-                //check if item is null before passing it to the constructor
-                url: jsonItem['html_url'] ?? "",
-                description: jsonItem['description'] ?? "");
-
-            githubRepoItem.repOwner = RepOwner(
-                username: ownerItem['login'] ?? "",
-                avatarUrl: ownerItem['avatar_url'] ?? "");
+            GithubRepoItem githubRepoItem = GithubRepoItem.fromJson(jsonItem);
 
             repos.add(githubRepoItem);
           }
-          print("repos length: ${repos.length}");
+          Logger.log("repos length: ${repos.length}");
         } catch (exception) {
-          print("fetchMore response exception: $exception");
+          Logger.log("fetchMore response exception: $exception");
         }
       }
       setState(() {
@@ -129,7 +110,7 @@ class _HomePageState extends State<HomePage> {
   void _search(String query, FilterTypes filterType) {
     pageIndex = 1;
     repos.clear();
-    print("filter: ${filterType}");
+    Logger.log("filter: ${filterType}");
     String url = "";
     if (filterType == FilterTypes.name) {
       url =
@@ -192,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                           : () {
                               String url =
                                   "https://api.github.com/search/repositories?q=created:$currentDate&page=${++pageIndex}&per_page=$perPage";
-                              print("url fetch more: ${url}");
+                              Logger.log("url fetch more: ${url}");
                               _fetchMore(url);
                             },
                       child: Row(
@@ -242,8 +223,8 @@ class _HomePageState extends State<HomePage> {
                               shape: BoxShape.circle),
                           child: ClipOval(
                             child: Image.network(
-                              repos[index].repOwner.avatarUrl.isNotEmpty
-                                  ? repos[index].repOwner.avatarUrl
+                              repos[index].repOwner!.avatarUrl.isNotEmpty
+                                  ? repos[index].repOwner!.avatarUrl
                                   : "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
                               //use alternative picture when avatar url is not available
                               ,
@@ -257,9 +238,9 @@ class _HomePageState extends State<HomePage> {
                         Flexible( //prevent text overflow
                           fit: FlexFit.loose,
                           child: Text(
-                          repos[index].repOwner.username,
+                          repos[index].repOwner!.username,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                               overflow: TextOverflow.ellipsis,
                               fontWeight: FontWeight.bold,
                               fontSize: 18),
@@ -301,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                         style: const TextStyle(fontSize: 15),
                       ),
 
-                    Center(child: TextButton.icon(icon: Icon(Icons.remove_red_eye_outlined,),onPressed: (){
+                    Center(child: TextButton.icon(icon: const Icon(Icons.remove_red_eye_outlined,),onPressed: (){
                       Navigator.push(context, MaterialPageRoute(builder: (context){
                         return RepoDetails(githubRepoItem: repos[index]);
                       }));
@@ -410,12 +391,12 @@ class _HomePageState extends State<HomePage> {
     if (_scrollController != null &&
         _scrollController!.position.pixels ==
             _scrollController!.position.maxScrollExtent) {
-      print("scroll positon: ${_scrollController!.position}");
+      Logger.log("scroll positon: ${_scrollController!.position}");
 
       //when scroll position reaches bottom fetch more data
       String url =
           "https://api.github.com/search/repositories?q=created:$currentDate&page=${++pageIndex}&per_page=$perPage";
-      print("url fetch more: ${url}");
+      Logger.log("url fetch more: ${url}");
       // _fetchMore(url);
     }
   }
@@ -432,7 +413,7 @@ class _HomePageState extends State<HomePage> {
     //get the repos that are created at the current date
     String url =
         "https://api.github.com/search/repositories?q=created:$currentDate&page=$pageIndex&per_page=$perPage&sort=updated&order=desc";
-    print("url: $url");
+    Logger.log("url: $url");
     _fetchRepos(url);
   }
 

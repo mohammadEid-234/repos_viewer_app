@@ -1,19 +1,21 @@
 
 import 'package:flutter/material.dart';
-import 'package:github_reps/Pages/homeScreen.dart';
+import 'package:github_reps/features/home/view/home_screen.dart';
 
 
 
 void main() {
-  runApp(_RootWidget());
+  runApp(ReposApp());
 }
 
-class _RootWidget extends StatelessWidget {
+class ReposApp extends StatelessWidget {
+  const ReposApp({super.key});
+
   //the root screen for the app
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return const MaterialApp(
       color: Colors.white,
       home: HomePage(),
       debugShowCheckedModeBanner: false, //hide debug banner

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:github_reps/Constants/filterTypes.dart';
+import 'package:github_reps/core/constants/filter_types.dart';
 
 class FilterController extends ChangeNotifier{
   //change search filter without rebuilding the whole page

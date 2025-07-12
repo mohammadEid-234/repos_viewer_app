@@ -17,13 +17,18 @@ pluginManagement {
     }
 
     plugins {
-        id "dev.flutter.flutter-gradle-plugin" version "1.0.0" apply false
+        // Flutter’s own Gradle loader is always v1.0.0
+        id "dev.flutter.flutter-plugin-loader"    version "1.0.0" apply false
+        // Use a modern AGP that supports compileSdk=35+
+        id "com.android.application"             version "8.11.0" apply false
+        // Match your Kotlin version to the plugin DSL
+        id "org.jetbrains.kotlin.android"        version "1.9.21" apply false
     }
 }
 
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-    id "com.android.application" version "7.3.0" apply false
+    id "com.android.application" version '8.11.0' apply false
 }
 
 include ":app"
